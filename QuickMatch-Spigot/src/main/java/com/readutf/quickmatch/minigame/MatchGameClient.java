@@ -7,8 +7,8 @@ import com.github.readutf.hermes.subscribers.impl.JedisParcelSubscriber;
 import com.readutf.quickmatch.MatchClient;
 import com.readutf.quickmatch.minigame.games.MatchRequestListener;
 import com.readutf.quickmatch.minigame.games.MatchSupplier;
-import com.readutf.quickmatch.minigame.server.ServerManager;
-import com.readutf.quickmatch.minigame.utils.DebugInterceptor;
+import com.readutf.quickmatch.server.ServerManager;
+import com.readutf.quickmatch.shared.RetrofitHelper;
 import com.readutf.quickmatch.shared.Server;
 import lombok.Getter;
 import okhttp3.OkHttpClient;
@@ -32,7 +32,7 @@ public class MatchGameClient implements MatchClient {
     private MatchSupplier matchSupplier;
 
     public MatchGameClient(JavaPlugin javaPlugin, String serverType) throws Exception {
-        this.retrofit = setupRetrofit();
+        this.retrofit = RetrofitHelper.getInstance().setupRetrofit();
         this.serverManager = new ServerManager(retrofit);
         this.server = serverManager.registerServer(javaPlugin.getServer().getIp(), "GAME_" + serverType, javaPlugin.getServer().getPort());
         this.jedisPool = new JedisPool();
@@ -56,17 +56,6 @@ public class MatchGameClient implements MatchClient {
     @Override
     public void onDisable() {
         serverManager.unregisterServer(server);
-    }
-
-    public Retrofit setupRetrofit() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.addInterceptor(new DebugInterceptor());
-
-        return new Retrofit.Builder()
-                .baseUrl("http://localhost:8080/api/private/")
-                .client(builder.build())
-                .addConverterFactory(JacksonConverterFactory.create(new ObjectMapper()))
-                .build();
     }
 
 }

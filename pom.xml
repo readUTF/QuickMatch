@@ -10,7 +10,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>QuickMatch-Spigot</module>
-        <module>QuickMatch-Velocity</module>
+        <module>QuickMatch-Proxy</module>
+        <module>QuickMatch-Server</module>
         <module>Quickmatch-Shared</module>
     </modules>
 

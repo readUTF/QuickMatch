@@ -5,11 +5,11 @@ import com.readutf.quickmatch.shared.Server;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/private" +
-        "/servers")
+@RequestMapping("/api/private/servers")
 @AllArgsConstructor
 public class ServerApi {
 
@@ -30,6 +30,22 @@ public class ServerApi {
         return ResponseData.success(server);
     }
 
+    /**
+     * API end point for getting a list of servers
+     *
+     * @return a list of servers
+     */
+    @GetMapping("list")
+    public ResponseData<List<Server>> listServers() {
+        return ResponseData.success(serverManager.getServers());
+    }
+
+    /**
+     * API end point for unregistering a server
+     *
+     * @param serverId the id of the server
+     * @return whether the server was unregistered
+     */
     @DeleteMapping("unregister")
     public ResponseData<Boolean> unregisterServer(@RequestParam("serverId") UUID serverId) {
         return ResponseData.success(serverManager.unregisterServer(serverId));

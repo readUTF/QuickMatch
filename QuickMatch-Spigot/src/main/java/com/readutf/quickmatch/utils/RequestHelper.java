@@ -1,4 +1,4 @@
-package com.readutf.quickmatch.minigame.utils;
+package com.readutf.quickmatch.utils;
 
 
 import com.readutf.quickmatch.shared.ResponseData;
