@@ -1,4 +1,4 @@
-### QuickMatch-Spigot
+## QuickMatch-Spigot
 
 This plugin is seperated into two modes, 'minigame' and 'hub'
 
