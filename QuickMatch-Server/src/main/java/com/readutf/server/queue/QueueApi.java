@@ -3,6 +3,8 @@ package com.readutf.server.queue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.readutf.hermes.Hermes;
+import com.readutf.quickmatch.shared.PlayerMessage;
 import com.readutf.quickmatch.shared.QueueEntry;
 import com.readutf.quickmatch.shared.QueueType;
 import com.readutf.quickmatch.shared.ResponseData;
@@ -20,6 +22,7 @@ public class QueueApi {
     private final QueueTypeStore queueTypeStore;
     private final ObjectMapper objectMapper;
     private final QueueManager queueManager;
+    private final Hermes hermes;
 
     @PutMapping("/join")
     public ResponseData<Map<String, Object>> joinQueue(@RequestParam("players") String playerString, String queueId) {
@@ -28,6 +31,13 @@ public class QueueApi {
 
             Optional<QueueType> queue = queueTypeStore.findById(queueId);
             if (queue.isEmpty()) return ResponseData.error("Queue not found");
+            if (players.stream().anyMatch(uuid -> queueManager.getQueue(uuid) != null)) {
+                if(players.size() == 1) {
+                    return ResponseData.error("You are already in a queue");
+                } else {
+                    return ResponseData.error("A member of your party is already in a queue");
+                }
+            }
             try {
                 QueueType queueType = queue.get();
                 int position = queueManager.addToQueue(players, queueType);
@@ -52,6 +62,12 @@ public class QueueApi {
 
         QueueEntry entry = queue.removePlayer(playerId);
         if (entry == null) return ResponseData.error("You are not in a queue");
+
+        queueManager.removeFromQueue(playerId);
+
+        Collection<UUID> players = entry.getPlayers();
+        players.remove(playerId);
+        hermes.sendParcel("PLAYER_MESSAGE", new PlayerMessage(players, "&cYour party has left the queue."));
 
         return ResponseData.success(entry.getPlayers());
     }

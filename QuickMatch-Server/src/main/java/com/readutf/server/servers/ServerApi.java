@@ -1,8 +1,10 @@
 package com.readutf.server.servers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.readutf.quickmatch.shared.ResponseData;
 import com.readutf.quickmatch.shared.Server;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ServerApi {
 
+    private final ObjectMapper objectMapper;
     private final ServerManager serverManager;
 
     /**
@@ -24,11 +27,21 @@ public class ServerApi {
      */
     @PutMapping("register")
     public ResponseData<Server> registerServer(String address, String serverType, int port) {
-        Server server = new Server(UUID.randomUUID(), address, serverType, port);
+        Server server = new Server(UUID.randomUUID(), address, serverType, port, 0, System.currentTimeMillis());
 
         serverManager.registerServer(server);
         return ResponseData.success(server);
     }
+
+    @SneakyThrows
+    @PutMapping("registerFull")
+    public ResponseData<Server> registerServerFull(String object) {
+        Server server = objectMapper.readValue(object, Server.class);
+
+        serverManager.registerServer(server);
+        return ResponseData.success(server);
+    }
+
 
     /**
      * API end point for getting a list of servers

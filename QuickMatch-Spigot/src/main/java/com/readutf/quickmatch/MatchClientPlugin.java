@@ -12,14 +12,18 @@ public class MatchClientPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        String mode = System.getProperty("type", "hub");
-        String serverType = System.getProperty("serverType", "hub");
+        String mode = System.getProperty("mode", "hub");
+        String category = System.getProperty("category", "default");
+
+        if(mode == null || category == null) {
+            throw new RuntimeException("Failed to start QuickMatch, missing mode or category");
+        }
 
         try {
             if (mode.equalsIgnoreCase("hub")) {
-                matchClient = new MatchHubClient(this, serverType);
+                matchClient = new MatchHubClient(this, category);
             } else {
-                matchClient = new MatchGameClient(this, serverType);
+                matchClient = new MatchGameClient(this, category);
             }
         } catch (Exception e) {
             e.printStackTrace();

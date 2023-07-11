@@ -9,16 +9,17 @@ import com.readutf.quickmatch.shared.Server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class MatchRequestListener {
 
     private final MatchGameClient matchGameClient;
-    private final Server server;
+    private final Supplier<Server> serverSupplier;
 
-    public MatchRequestListener(MatchGameClient matchGameClient) {
+    public MatchRequestListener(MatchGameClient matchGameClient, Supplier<Server> serverSupplier) {
         this.matchGameClient = matchGameClient;
-        this.server = matchGameClient.getServer();
+        this.serverSupplier = serverSupplier;
     }
 
     @ParcelListener("FIND_GAME")
@@ -38,7 +39,7 @@ public class MatchRequestListener {
             return new ArrayList<>();
         }
 
-        return availableGames.stream().map(s -> new GameData(server, s, System.currentTimeMillis())).collect(Collectors.toList());
+        return availableGames.stream().map(s -> new GameData(serverSupplier.get(), s, System.currentTimeMillis())).collect(Collectors.toList());
     }
 
 }

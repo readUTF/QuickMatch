@@ -1,4 +1,4 @@
-package com.readutf.playerclient.server;
+package com.readutf.proxy.server;
 
 import com.readutf.quickmatch.shared.ResponseData;
 import com.readutf.quickmatch.shared.Server;

@@ -1,4 +1,4 @@
-package com.readutf.quickmatch.utils;
+package com.readutf.quickmatch.shared.utils;
 
 
 import com.readutf.quickmatch.shared.ResponseData;

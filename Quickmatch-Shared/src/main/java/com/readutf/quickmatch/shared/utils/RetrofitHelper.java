@@ -1,4 +1,4 @@
-package com.readutf.quickmatch.shared;
+package com.readutf.quickmatch.shared.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;

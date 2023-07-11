@@ -10,8 +10,8 @@ import java.util.UUID;
 @Getter
 public class QueueEntry {
 
-    private long joinTime;
     private final Collection<UUID> players;
+    private long joinTime;
 
     public QueueEntry(Collection<UUID> players) {
         this.joinTime = System.currentTimeMillis();

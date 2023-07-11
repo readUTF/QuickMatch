@@ -1,6 +1,7 @@
 package com.readutf.server.queue;
 
 import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.profile.LiveProfileManager;
 import com.readutf.server.game.GameFinder;
 import com.readutf.server.publisher.Publishers;
 
@@ -14,13 +15,15 @@ public class QueueManager {
     private final GameFinder gameFinder;
     private final Map<UUID, Queue> playerToQueue;
     private final Map<String, Queue> queueTasks;
+    private final LiveProfileManager liveProfileManager;
 
-    public QueueManager(GameFinder gameFinder, Publishers publishers) {
-        this.timer = new Timer();
+    public QueueManager(LiveProfileManager liveProfileManager, Timer timer, GameFinder gameFinder, Publishers publishers) {
+        this.timer = timer;
         this.gameFinder = gameFinder;
         this.publishers = publishers;
         this.queueTasks = new HashMap<>();
         this.playerToQueue = new HashMap<>();
+        this.liveProfileManager = liveProfileManager;
     }
 
     /**
@@ -32,14 +35,16 @@ public class QueueManager {
      */
     public int addToQueue(Collection<UUID> players, QueueType queueType) throws IllegalArgumentException {
         if (players.size() > queueType.getMaxTeamSize() || players.size() < queueType.getMinTeamSize())
-            throw new IllegalArgumentException("Invalid team size");
+            throw new IllegalArgumentException("Your team size is invalid");
         if (players.stream().anyMatch(playerToQueue::containsKey))
-            throw new IllegalArgumentException("Player is already in a queue");
+            throw new IllegalArgumentException("You are already in a queue");
 
-        Queue queue = queueTasks.computeIfAbsent(queueType.getId(), s -> new Queue(gameFinder, publishers, queueType));
+        Queue queue = queueTasks.computeIfAbsent(queueType.getId(), s -> new Queue(liveProfileManager, this, gameFinder, publishers, queueType));
         if (!queue.isRunning()) {
-            timer.scheduleAtFixedRate(queue, 0, 50);
+            timer.scheduleAtFixedRate(queue, 0, 1000);
             queue.setRunning(true);
+        } else {
+            queue.run();
         }
 
         players.forEach(uuid -> playerToQueue.put(uuid, queue));
@@ -60,4 +65,7 @@ public class QueueManager {
         return playerToQueue.get(uuid);
     }
 
+    public void removeFromQueue(UUID playerId) {
+        playerToQueue.remove(playerId);
+    }
 }
