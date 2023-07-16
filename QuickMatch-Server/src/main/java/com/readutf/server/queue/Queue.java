@@ -1,10 +1,9 @@
 package com.readutf.server.queue;
 
-import com.readutf.quickmatch.shared.GameData;
-import com.readutf.quickmatch.shared.QueueEntry;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.*;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
 import com.readutf.server.game.GameFinder;
+import com.readutf.server.joinintent.IntentManager;
 import com.readutf.server.publisher.Publishers;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 @Setter
 public class Queue extends TimerTask {
 
+    private final IntentManager intentManager;
     private final LiveProfileManager liveProfileManager;
     private final QueueManager queueManager;
     private final GameFinder gameFinder;
@@ -26,7 +26,8 @@ public class Queue extends TimerTask {
     private boolean running = false;
 
 
-    public Queue(LiveProfileManager liveProfileManager, QueueManager queueManager, GameFinder gameFinder, Publishers publishers, QueueType queueType) {
+    public Queue(IntentManager intentManager, LiveProfileManager liveProfileManager, QueueManager queueManager, GameFinder gameFinder, Publishers publishers, QueueType queueType) {
+        this.intentManager = intentManager;
         this.liveProfileManager = liveProfileManager;
         this.queueManager = queueManager;
         this.gameFinder = gameFinder;
@@ -40,6 +41,24 @@ public class Queue extends TimerTask {
         List<QueueEntry> sizeSortedList = new ArrayList<>(players.stream().sorted(Comparator.comparingInt(QueueEntry::size).thenComparing(QueueEntry::getAge)).toList());
 
 //        System.out.println(sizeSortedList);
+
+        for (QueueEntry queueEntry : sizeSortedList) {
+            if (!isOnline(queueEntry)) {
+                synchronized (players) {
+                    UUID first = queueEntry.getPlayers().iterator().next();
+                    removePlayer(first);
+                    queueManager.removeFromQueue(first);
+                }
+                System.out.println("removed from queue: " + queueEntry.getPlayers());
+
+                publishers.sendPlayerMessage(
+                        PlayerMessage.builder()
+                                .setPlayers(queueEntry.getPlayers())
+                                .setMessages("&cYou have been removed from the queue as a member of your party is offline.")
+                                .build()
+                );
+            }
+        }
 
         //collect teams
         int size = 0;
@@ -80,7 +99,9 @@ public class Queue extends TimerTask {
                 }
             }
         }
+
         List<UUID> players = teams.stream().flatMap(queueEntries -> queueEntries.stream().flatMap(queueEntry -> queueEntry.getPlayers().stream())).toList();
+        intentManager.saveIntent(new JoinIntent(game.getGameId(), queueType, players));
         publishers.sendServerSwitch(players, game);
         for (UUID player : players) {
             queueManager.removeFromQueue(player);
@@ -115,4 +136,9 @@ public class Queue extends TimerTask {
         }
         return queueEntry;
     }
+
+    public boolean isOnline(QueueEntry queueEntry) {
+        return queueEntry.getPlayers().stream().allMatch(liveProfileManager::isOnline);
+    }
+
 }

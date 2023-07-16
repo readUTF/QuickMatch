@@ -5,18 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.readutf.hermes.pipline.listeners.ParcelListener;
 import com.github.readutf.hermes.wrapper.ParcelWrapper;
 import com.readutf.proxy.QuickMatchProxy;
+import com.readutf.proxy.utils.ColorUtils;
 import com.readutf.proxy.utils.Logger;
 import com.readutf.quickmatch.shared.GameData;
+import com.readutf.quickmatch.shared.PlayerMessage;
 import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.shared.ServerPing;
 import com.readutf.quickmatch.shared.serializers.ServerPingSerializer;
 import com.readutf.quickmatch.shared.serializers.UUIDSerializer;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class Subscriber {
 
@@ -30,6 +30,7 @@ public class Subscriber {
     @ParcelListener("API_RESTART")
     public void onRestart(ParcelWrapper parcelWrapper) {
         quickMatchProxy.getServerManager().restart();
+        quickMatchProxy.getProxyManager().restart();
     }
 
     @ParcelListener("SERVER_SWITCH")
@@ -77,6 +78,32 @@ public class Subscriber {
 
 
         quickMatchProxy.getServerManager().handlePing(serverPing);
+    }
+
+    @ParcelListener("PLAYER_MESSAGE")
+    public void onPlayerMessage(ParcelWrapper parcelWrapper) {
+        PlayerMessage playerMessage = parcelWrapper.get(new TypeReference<>() {});
+
+        if(playerMessage.getPermission() != null) {
+            for (Player allPlayer : quickMatchProxy.getProxyServer().getAllPlayers()) {
+                if(allPlayer.hasPermission(playerMessage.getPermission())) {
+                    for (String message : playerMessage.getMessages()) {
+                        allPlayer.sendMessage(ColorUtils.colorize(message));
+                    }
+                }
+            }
+        } else {
+            for (UUID player : playerMessage.getPlayerIds()) {
+                quickMatchProxy.getProxyServer().getPlayer(player).ifPresent(player1 -> {
+                    for (String message : playerMessage.getMessages()) {
+                        player1.sendMessage(ColorUtils.colorize(message));
+                    }
+                });
+            }
+        }
+
+
+
     }
 
     @ParcelListener("SERVER_UNREGISTER")

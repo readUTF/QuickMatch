@@ -66,6 +66,10 @@ public class ServerManager {
         return typeToServers.getOrDefault(type.toLowerCase(), Collections.emptyList());
     }
 
+    public Server getServerById(UUID serverId) {
+        return idToServer.get(serverId);
+    }
+
     public void registerServer(Server server) {
         ServerInfo serverInfo = new ServerInfo(server.getServerId().toString(), new InetSocketAddress(server.getAddress(), server.getPort()));
         RegisteredServer registeredServer = proxyServer.registerServer(serverInfo);
@@ -79,9 +83,10 @@ public class ServerManager {
         serverToRegisteredServer.put(server, registeredServer);
 
         MessageUtils.sendPermissionMessage(
-                "&b[QuickMatch] &aA new server has registered &9[%s]".formatted(server.getShortName()),
+                "&9&lGM &8» &7A new &b%s &7server has registered with id &b%s".formatted(server.getServerType(), server.getShortName()),
                 "quickmatch.server.notify"
         );
+
         Logger.getSERVER().info("Registered server %s (%s:%s)".formatted(server.getShortName(), server.getAddress(), server.getPort()));
     }
 
@@ -94,6 +99,7 @@ public class ServerManager {
         Server server = idToServer.get(serverPing.getServerId());
         server.setLastPing(System.currentTimeMillis());
         server.setPlayerCount(serverPing.getPlayerCount());
+        server.setTps(serverPing.getTps());
     }
 
     public void unregisterServer(UUID uuid) {
@@ -111,10 +117,17 @@ public class ServerManager {
             return registeredServers;
         });
 
-        MessageUtils.sendPermissionMessage(
-                "&b[QuickMatch] &c%s has gone offline &9[%s]".formatted(server.getShortName(), server.getLastPing() > 10000 ? "Timed Out" : "Shutdown"),
-                "quickmatch.server.notify"
-        );
+        if(System.currentTimeMillis() - server.getLastPing() > 10000) {
+            MessageUtils.sendPermissionMessage(
+                    "&9&lGM &8» &7A server with id &b%s &7has &ctimed out".formatted(server.getShortName()),
+                    "quickmatch.server.notify"
+            );
+        } else {
+            MessageUtils.sendPermissionMessage(
+                    "&9&lGM &8» &7A server with id &b%s &7has gone offline".formatted(server.getShortName()),
+                    "quickmatch.server.notify"
+            );
+        }
         Logger.getSERVER().info("Un-Registered server %s".formatted(uuid));
     }
 }

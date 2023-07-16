@@ -67,7 +67,7 @@ public class QueueApi {
 
         Collection<UUID> players = entry.getPlayers();
         players.remove(playerId);
-        hermes.sendParcel("PLAYER_MESSAGE", new PlayerMessage(players, "&cYour party has left the queue."));
+        hermes.sendParcel("PLAYER_MESSAGE", PlayerMessage.builder().setMessages("&cYour party has left the queue.").setPlayers(players).build());
 
         return ResponseData.success(entry.getPlayers());
     }

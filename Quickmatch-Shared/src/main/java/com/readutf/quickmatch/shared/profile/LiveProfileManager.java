@@ -42,4 +42,9 @@ public class LiveProfileManager {
         return profile;
     }
 
+    public boolean isOnline(UUID player) {
+        Boolean result = getProfile(player).map(liveProfile1 -> liveProfile1.isOnline() && System.currentTimeMillis() - liveProfile1.getLastActive() < 5000).orElse(false);
+        System.out.println("isOnline(" + player + ") = " + result);
+        return result;
+    }
 }

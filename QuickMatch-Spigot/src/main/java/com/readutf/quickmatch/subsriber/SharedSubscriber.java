@@ -29,18 +29,4 @@ public class SharedSubscriber {
         serverManager.restart();
     }
 
-    @ParcelListener("PLAYER_MESSAGE")
-    public void onPlayerMessage(ParcelWrapper parcelWrapper) {
-        PlayerMessage playerMessage = parcelWrapper.get(new TypeReference<>() {});
-
-        for (UUID player : playerMessage.getPlayerIds()) {
-            Optional.ofNullable(Bukkit.getPlayer(player)).ifPresent(player1 -> {
-                for (String message : playerMessage.getMessages()) {
-                    player1.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-                }
-            });
-        }
-
-    }
-
 }

@@ -5,11 +5,18 @@ import lombok.Getter;
 
 import java.util.UUID;
 
-@AllArgsConstructor @Getter
+@Getter
 public class ServerPing {
 
     private final UUID serverId;
     private final int playerCount;
+    private final double tps;
+
+    public ServerPing(UUID serverId, int playerCount, double tps) {
+        this.serverId = serverId;
+        this.playerCount = playerCount;
+        this.tps = tps;
+    }
 
     @Override
     public String toString() {

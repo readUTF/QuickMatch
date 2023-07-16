@@ -8,4 +8,6 @@ public interface MatchSupplier {
 
     List<String> getAvailableGames(QueueType queueType) throws Exception;
 
+    String createGame(QueueType queueType) throws Exception;
+
 }

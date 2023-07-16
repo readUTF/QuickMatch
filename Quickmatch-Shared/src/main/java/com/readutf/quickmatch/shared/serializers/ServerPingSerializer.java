@@ -11,16 +11,17 @@ public class ServerPingSerializer implements StringSerializer<ServerPing> {
 
     @Override
     public String serialize(ServerPing serverPing) {
-        ByteBuffer allocate = ByteBuffer.allocate(20);
+        ByteBuffer allocate = ByteBuffer.allocate(24);
         allocate.putLong(serverPing.getServerId().getMostSignificantBits());
         allocate.putLong(serverPing.getServerId().getLeastSignificantBits());
         allocate.putInt(serverPing.getPlayerCount());
+        allocate.putInt((int) (serverPing.getTps() * 100));
         return Base64.getEncoder().encodeToString(allocate.array());
     }
 
     @Override
     public ServerPing deserialize(String s) {
         ByteBuffer buffer = ByteBuffer.wrap(Base64.getDecoder().decode(s));
-        return new ServerPing(new UUID(buffer.getLong(), buffer.getLong()), buffer.getInt());
+        return new ServerPing(new UUID(buffer.getLong(), buffer.getLong()), buffer.getInt(), (double) buffer.getInt() / 100.0);
     }
 }

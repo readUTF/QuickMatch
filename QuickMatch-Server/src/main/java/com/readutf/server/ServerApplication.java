@@ -7,8 +7,12 @@ import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
 import com.readutf.server.commands.CommandManager;
 import com.readutf.server.commands.impl.ServersCommand;
+import com.readutf.server.config.SettingsConfig;
 import com.readutf.server.game.GameFinder;
 import com.readutf.server.game.impl.AvailableGameFinder;
+import com.readutf.server.game.impl.CreatorGameFinder;
+import com.readutf.server.joinintent.IntentManager;
+import com.readutf.server.proxy.ProxyManager;
 import com.readutf.server.publisher.Publishers;
 import com.readutf.server.queue.QueueManager;
 import com.readutf.server.servers.ServerManager;
@@ -31,15 +35,24 @@ public class ServerApplication {
         SpringApplication.run(ServerApplication.class, args);
     }
 
+    @Bean
+    public SettingsConfig settingsConfig() {
+        return new SettingsConfig();
+    }
 
     @Bean
-    public Hermes hermes() {
-        JedisPool jedisPool = new JedisPool();
+    public Hermes hermes(SettingsConfig settingsConfig) {
+        JedisPool jedisPool = settingsConfig.getJedisPool();
         return Hermes.builder()
                 .prefix("quickmatch")
                 .parcelSender(new JedisParcelSender(jedisPool))
                 .parcelSubscriber(new JedisParcelSubscriber(jedisPool))
                 .build();
+    }
+
+    @Bean
+    public IntentManager intentManager() {
+        return new IntentManager();
     }
 
     @EventListener(ContextRefreshedEvent.class)
@@ -49,9 +62,8 @@ public class ServerApplication {
     }
 
     @Bean
-    public LiveProfileManager liveProfileManager() {
-        JedisPool jedisPool = new JedisPool();
-        return new LiveProfileManager(jedisPool);
+    public LiveProfileManager liveProfileManager(SettingsConfig settingsConfig) {
+        return new LiveProfileManager(settingsConfig.getJedisPool());
     }
 
     @Bean
@@ -65,15 +77,20 @@ public class ServerApplication {
     }
 
     @Bean
-    public ServerManager serverManager(Hermes hermes, Timer timer) {
+    public ProxyManager proxyManager(Hermes hermes, Timer timer) {
+        return new ProxyManager(hermes, timer);
+    }
+
+    @Bean
+    public ServerManager serverManager(Hermes hermes, Timer timer, ProxyManager proxyManager) {
         ServerManager serverManager = new ServerManager(hermes, timer);
-        hermes.addParcelListener(new Subscriber(serverManager));
+        hermes.addParcelListener(new Subscriber(serverManager, proxyManager));
         return serverManager;
     }
 
     @Bean
-    public GameFinder gameFinder(Hermes hermes) {
-        return new AvailableGameFinder(hermes);
+    public GameFinder gameFinder(ServerManager serverManager, Hermes hermes) {
+        return new CreatorGameFinder(serverManager, hermes);
     }
 
     @Bean
@@ -83,8 +100,8 @@ public class ServerApplication {
 
 
     @Bean
-    public QueueManager queueManager(Timer timer, LiveProfileManager liveProfileManager, GameFinder gameFinder, Publishers publishers) {
-        return new QueueManager(liveProfileManager, timer, gameFinder, publishers);
+    public QueueManager queueManager(IntentManager intentManager, Timer timer, LiveProfileManager liveProfileManager, GameFinder gameFinder, Publishers publishers) {
+        return new QueueManager(timer, publishers, liveProfileManager, gameFinder, intentManager);
     }
 
 }

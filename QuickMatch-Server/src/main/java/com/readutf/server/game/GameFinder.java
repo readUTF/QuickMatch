@@ -10,6 +10,8 @@ public interface GameFinder {
 
     List<GameData> findGames(QueueType queueType) throws Exception;
 
-    @Nullable GameData findGame(QueueType queueType) throws Exception;
+    @Nullable default GameData findGame(QueueType queueType) throws Exception {
+        return findGames(queueType).stream().findFirst().orElse(null);
+    }
 
 }

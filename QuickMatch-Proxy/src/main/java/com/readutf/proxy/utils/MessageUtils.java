@@ -8,7 +8,7 @@ public class MessageUtils {
     public static void sendPermissionMessage(String message, String permission) {
         for (Player allPlayer : QuickMatchProxy.getInstance().getProxyServer().getAllPlayers()) {
             if(allPlayer.hasPermission(permission)) {
-                allPlayer.sendMessage(ColorUtils.colorize(permission));
+                allPlayer.sendMessage(ColorUtils.colorize(message));
             }
         }
     }

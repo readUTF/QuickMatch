@@ -36,7 +36,7 @@ public class QueueCommand extends BaseCommand {
         ResponseData<Map<String, Object>> response = queueManager.joinQueue(Collections.singletonList(player.getUniqueId()), queueName);
         if(response.isSuccessful()) {
             Map<String, Object> data = response.getData();
-            player.sendMessage("§aYou have joined the queue §e" + data.get("queueName") + "§a. You are in position §e" + data.get("position") + "§a.");
+            player.sendMessage("§aYou have joined the §e" + data.get("queueName") +" §aqueue. You are in position §e" + data.get("position") + "§a.");
         } else {
             player.sendMessage("§c" + response.getErrorReason());
         }

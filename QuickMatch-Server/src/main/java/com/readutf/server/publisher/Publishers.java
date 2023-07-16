@@ -2,6 +2,7 @@ package com.readutf.server.publisher;
 
 import com.github.readutf.hermes.Hermes;
 import com.readutf.quickmatch.shared.GameData;
+import com.readutf.quickmatch.shared.PlayerMessage;
 import com.readutf.quickmatch.shared.Server;
 
 import java.util.Collection;
@@ -18,6 +19,10 @@ public class Publishers {
 
     public void sendServerSwitch(Collection<UUID> players, GameData gameData) {
         hermes.sendParcel("SERVER_SWITCH", Map.of("players", players, "server", gameData));
+    }
+
+    public void sendPlayerMessage(PlayerMessage playerMessage) {
+        hermes.sendParcel("PLAYER_MESSAGE", playerMessage);
     }
 
 }

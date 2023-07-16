@@ -4,6 +4,7 @@ import com.github.readutf.hermes.Hermes;
 import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.shared.ServerPing;
 import com.readutf.quickmatch.shared.serializers.ServerPingSerializer;
+import com.readutf.quickmatch.utils.TPS;
 import org.bukkit.Bukkit;
 
 import java.util.Timer;
@@ -25,6 +26,7 @@ public class KeepAliveTask extends TimerTask {
     public void run() {
         Server server = serverSupplier.get();
         if(server == null) return;
-        hermes.sendParcel("SERVER_PING", new ServerPing(server.getServerId(), Bukkit.getOnlinePlayers().size()), new ServerPingSerializer());
+
+        hermes.sendParcel("SERVER_PING", new ServerPing(server.getServerId(), Bukkit.getOnlinePlayers().size(), TPS.getTPS()), new ServerPingSerializer());
     }
 }

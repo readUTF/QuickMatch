@@ -4,7 +4,7 @@ import com.readutf.quickmatch.shared.utils.CachedValue;
 import com.readutf.quickmatch.shared.QueueType;
 import com.readutf.quickmatch.shared.utils.RequestHelper;
 import com.readutf.quickmatch.shared.ResponseData;
-import com.readutf.quickmatch.utils.JsonWrapper;
+import com.readutf.quickmatch.shared.utils.JsonWrapper;
 import retrofit2.Retrofit;
 
 import java.util.List;
@@ -16,10 +16,8 @@ public class QueueManager {
 
     private final QueueService queueService;
     private final CachedValue<List<QueueType>> queueTypes;
-    private final Retrofit retrofit;
 
     public QueueManager(Retrofit retrofit) {
-        this.retrofit = retrofit;
         queueService = retrofit.create(QueueService.class);
         queueTypes = new CachedValue<>(() -> RequestHelper.get(queueService.getQueues()), TimeUnit.MINUTES.toMillis(1));
     }

@@ -51,6 +51,11 @@
             <artifactId>Hermes</artifactId>
             <version>2.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.jsixface</groupId>
+            <artifactId>yamlconfig</artifactId>
+            <version>1.1</version>
+        </dependency>
     </dependencies>
 
     <build>

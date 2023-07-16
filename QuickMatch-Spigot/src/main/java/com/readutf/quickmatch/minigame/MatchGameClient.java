@@ -9,16 +9,20 @@ import com.readutf.quickmatch.minigame.games.MatchRequestListener;
 import com.readutf.quickmatch.minigame.games.MatchSupplier;
 import com.readutf.quickmatch.minigame.listeners.JoinIntentListenerDemo;
 import com.readutf.quickmatch.server.ServerManager;
+import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.intent.IntentService;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
 import com.readutf.quickmatch.shared.utils.RetrofitHelper;
 import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.subsriber.SharedSubscriber;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.JedisPool;
 import retrofit2.Retrofit;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,8 +36,9 @@ public class MatchGameClient implements MatchClient {
     private final JedisPool jedisPool;
     private final Hermes hermes;
     private final LiveProfileManager liveProfileManager;
+    private final IntentService intentService;
 
-    private MatchSupplier matchSupplier;
+    private @Setter MatchSupplier matchSupplier;
 
     public MatchGameClient(JavaPlugin javaPlugin, String serverType) throws Exception {
         this.javaPlugin = javaPlugin;
@@ -48,10 +53,21 @@ public class MatchGameClient implements MatchClient {
         this.server = serverManager.registerServer(javaPlugin.getServer().getIp(), "GAME_" + serverType, javaPlugin.getServer().getPort());
         hermes.addParcelListener(new MatchRequestListener(this, this::getServer));
         hermes.addParcelListener(new SharedSubscriber(serverManager));
-        matchSupplier = queueType -> List.of(UUID.randomUUID().toString());
-        this.liveProfileManager = new LiveProfileManager(jedisPool);
+        matchSupplier = new MatchSupplier() {
+            @Override
+            public List<String> getAvailableGames(QueueType queueType) {
+                return Collections.emptyList();
+            }
 
-        new QuickMatchGameAPI(liveProfileManager);
+            @Override
+            public String createGame(QueueType queueType) {
+                return null;
+            }
+        };
+        this.liveProfileManager = new LiveProfileManager(jedisPool);
+        this.intentService = retrofit.create(IntentService.class);
+
+        new QuickMatchGameAPI(this, liveProfileManager, intentService);
     }
 
     @Override

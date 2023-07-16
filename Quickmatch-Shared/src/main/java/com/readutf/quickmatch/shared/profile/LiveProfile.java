@@ -2,9 +2,7 @@ package com.readutf.quickmatch.shared.profile;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
@@ -16,7 +14,8 @@ import java.util.UUID;
 public class LiveProfile {
 
     private final UUID playerId;
-    private final String username, lastServer, joinIntent;
+    private final boolean online;
+    private final String username, lastServer, lastProxy, joinIntent;
     private final Long lastActive;
 
     @JsonCreator
@@ -24,12 +23,16 @@ public class LiveProfile {
             @JsonProperty("playerId") UUID playerId,
             @JsonProperty("username") @Nonnull String username,
             @JsonProperty("lastServer") @Nonnull String lastServer,
+            @JsonProperty("lastServer") @Nonnull String lastProxy,
+            @JsonProperty("online") boolean online,
             @JsonProperty("lastActive") @Nullable Long lastActive,
             @JsonProperty("joinIntent") @Nullable String joinIntent)
     {
         this.playerId = playerId;
         this.username = username;
         this.lastServer = lastServer;
+        this.lastProxy = lastProxy;
+        this.online = online;
         this.lastActive = lastActive;
         this.joinIntent = joinIntent;
     }

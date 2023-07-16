@@ -2,7 +2,7 @@ package com.readutf.quickmatch.server;
 
 import com.readutf.quickmatch.shared.ResponseData;
 import com.readutf.quickmatch.shared.Server;
-import com.readutf.quickmatch.utils.JsonWrapper;
+import com.readutf.quickmatch.shared.utils.JsonWrapper;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.PUT;

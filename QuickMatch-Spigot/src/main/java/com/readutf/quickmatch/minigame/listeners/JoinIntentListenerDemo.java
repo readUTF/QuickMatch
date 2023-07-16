@@ -1,6 +1,7 @@
 package com.readutf.quickmatch.minigame.listeners;
 
 import com.readutf.quickmatch.minigame.api.QuickMatchGameAPI;
+import com.readutf.quickmatch.shared.JoinIntent;
 import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,8 +24,7 @@ public class JoinIntentListenerDemo implements Listener {
     public void onLogin(PlayerLoginEvent e) {
 
         Player player = e.getPlayer();
-        String joinIntent = QuickMatchGameAPI.getInstance().getJoinIntent(player.getUniqueId());
-        System.out.println("You joined with intent: " + joinIntent);
+        JoinIntent joinIntent = QuickMatchGameAPI.getInstance().getJoinIntent(player.getUniqueId());
         if(joinIntent == null) {
             e.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Invalid join attempt");
         } else {

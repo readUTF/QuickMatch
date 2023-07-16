@@ -4,7 +4,7 @@ import com.github.readutf.hermes.Hermes;
 import com.readutf.quickmatch.shared.utils.RequestHelper;
 import com.readutf.quickmatch.shared.ResponseData;
 import com.readutf.quickmatch.shared.Server;
-import com.readutf.quickmatch.utils.JsonWrapper;
+import com.readutf.quickmatch.shared.utils.JsonWrapper;
 import retrofit2.Retrofit;
 
 import java.util.function.Supplier;

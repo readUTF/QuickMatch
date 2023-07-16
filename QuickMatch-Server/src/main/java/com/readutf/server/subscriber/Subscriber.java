@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.readutf.hermes.pipline.listeners.ParcelListener;
 import com.github.readutf.hermes.wrapper.ParcelWrapper;
+import com.readutf.quickmatch.shared.ProxyPing;
 import com.readutf.quickmatch.shared.ServerPing;
+import com.readutf.quickmatch.shared.serializers.ProxyPingSerializer;
 import com.readutf.quickmatch.shared.serializers.ServerPingSerializer;
+import com.readutf.server.proxy.ProxyManager;
 import com.readutf.server.servers.ServerManager;
 
 import java.util.ArrayList;
@@ -18,9 +21,11 @@ public class Subscriber {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final ServerManager serverManager;
+    private final ProxyManager proxyManager;
 
-    public Subscriber(ServerManager serverManager) {
+    public Subscriber(ServerManager serverManager, ProxyManager proxyManager) {
         this.serverManager = serverManager;
+        this.proxyManager = proxyManager;
     }
 
     @ParcelListener("SERVER_PING")
@@ -32,8 +37,21 @@ public class Subscriber {
             e.printStackTrace();
             return;
         }
-
         serverManager.handlePing(serverPing);
+    }
+
+    @ParcelListener("PROXY_PING")
+    public void onProxyPing(ParcelWrapper parcelWrapper) {
+        ProxyPing proxyPing;
+        try {
+            proxyPing = parcelWrapper.get(new ProxyPingSerializer());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        proxyManager.handlePing(proxyPing);
+
     }
 
 }

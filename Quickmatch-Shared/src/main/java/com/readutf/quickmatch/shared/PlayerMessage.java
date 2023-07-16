@@ -2,35 +2,58 @@ package com.readutf.quickmatch.shared;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor @Getter
+@NoArgsConstructor
+@Getter
+@Setter
 public class PlayerMessage {
 
+    private String permission;
     private Collection<UUID> playerIds;
     private Collection<String> messages;
 
-    public PlayerMessage(Collection<UUID> playerIds, Collection<String> messages) {
-        this.playerIds = playerIds;
-        this.messages = messages;
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public PlayerMessage(UUID playerId, Collection<String> messages) {
-        this.playerIds = List.of(playerId);
-        this.messages = messages;
-    }
+    public static class Builder {
 
-    public PlayerMessage(UUID playerId, String... messages) {
-        this.playerIds = List.of(playerId);
-        this.messages = Arrays.asList(messages);
-    }
+        private final PlayerMessage playerMessage;
 
-    public PlayerMessage(Collection<UUID> playerIds, String... messages) {
-        this.playerIds = playerIds;
-        this.messages = Arrays.asList(messages);
+        public Builder() {
+            this.playerMessage = new PlayerMessage();
+        }
+
+        public Builder setPermission(String permission) {
+            playerMessage.setPermission(permission);
+            return this;
+        }
+
+        public Builder setPlayers(UUID... playerIds) {
+            playerMessage.setPlayerIds(Arrays.asList(playerIds));
+            return this;
+        }
+
+        public Builder setPlayers(Collection<UUID> playerIds) {
+            playerMessage.setPlayerIds(playerIds);
+            return this;
+        }
+
+        public Builder setMessages(String... messages) {
+            playerMessage.setMessages(Arrays.asList(messages));
+            return this;
+        }
+
+        public PlayerMessage build() {
+            return playerMessage;
+        }
+
+
     }
 }

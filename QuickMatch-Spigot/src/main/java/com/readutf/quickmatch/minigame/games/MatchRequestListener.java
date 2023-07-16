@@ -1,18 +1,25 @@
 package com.readutf.quickmatch.minigame.games;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.readutf.hermes.pipline.listeners.ParcelListener;
 import com.github.readutf.hermes.wrapper.ParcelWrapper;
 import com.readutf.quickmatch.minigame.MatchGameClient;
 import com.readutf.quickmatch.shared.GameData;
 import com.readutf.quickmatch.shared.QueueType;
 import com.readutf.quickmatch.shared.Server;
+import com.readutf.quickmatch.shared.intent.IntentService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class MatchRequestListener {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final MatchGameClient matchGameClient;
     private final Supplier<Server> serverSupplier;
@@ -40,6 +47,30 @@ public class MatchRequestListener {
         }
 
         return availableGames.stream().map(s -> new GameData(serverSupplier.get(), s, System.currentTimeMillis())).collect(Collectors.toList());
+    }
+
+    @ParcelListener("CREATE_GAME")
+    public GameData createGame(ParcelWrapper parcelWrapper) {
+        HashMap<String, Object> request = parcelWrapper.get(new TypeReference<>() {});
+        QueueType queueType = objectMapper.convertValue(request.get("queueType"), QueueType.class);
+        UUID serverId = UUID.fromString((String) request.get("serverId"));
+
+        String gameId = null;
+        try {
+            gameId = matchGameClient.getMatchSupplier().createGame(queueType);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        Server server = serverSupplier.get();
+        System.out.println("server : " + server);
+        System.out.println("gameId: " + gameId);
+        if (server == null || server.getServerId() == serverId || gameId == null) {
+            System.out.println("invalid server");
+            return null;
+        }
+
+        return new GameData(server, gameId, System.currentTimeMillis());
     }
 
 }
