@@ -32,8 +32,6 @@ public class MatchHubClient implements MatchClient {
     private PaperCommandManager commandManager;
     private final QueueManager queueManager;
 
-    private Server server;
-
     public MatchHubClient(JavaPlugin javaPlugin, String serverType) throws Exception {
         this.javaPlugin = javaPlugin;
         this.retrofit = RetrofitHelper.getInstance().setupRetrofit();
@@ -44,8 +42,8 @@ public class MatchHubClient implements MatchClient {
                 .parcelSubscriber(new JedisParcelSubscriber(jedisPool))
                 .build();
         this.queueManager = new QueueManager(retrofit);
-        this.serverManager = new ServerManager(hermes, retrofit, this::getServer);
-        this.server = serverManager.registerServer(javaPlugin.getServer().getIp(), "HUB_" + serverType.toUpperCase(), javaPlugin.getServer().getPort());
+        this.serverManager = new ServerManager(hermes, retrofit);
+        serverManager.registerServer(javaPlugin.getServer().getIp(), "HUB_" + serverType.toUpperCase(), javaPlugin.getServer().getPort());
         this.hermes.addParcelListener(new SharedSubscriber(serverManager));
     }
 

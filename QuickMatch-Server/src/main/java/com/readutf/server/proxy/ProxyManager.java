@@ -11,7 +11,7 @@ import java.util.*;
 public class ProxyManager {
 
     private final Hermes hermes;
-    private @Getter final Map<UUID, ProxyInfo> activeProxies;
+    private @Getter final Map<Integer, ProxyInfo> activeProxies;
 
     public ProxyManager(Hermes hermes, Timer timer) {
         this.hermes = hermes;
@@ -19,22 +19,22 @@ public class ProxyManager {
         timer.scheduleAtFixedRate(new ProxyTask(this), 0, 1000);
     }
 
-    public ProxyInfo registerProxy(UUID proxyId, String address, int port) {
+    public ProxyInfo registerProxy(Integer proxyId, String address, int port) {
         ProxyInfo proxyInfo = new ProxyInfo(proxyId, address, port, 0, System.currentTimeMillis(), System.currentTimeMillis());
         activeProxies.put(proxyId, proxyInfo);
 
         hermes.sendParcel("PLAYER_MESSAGE", new PlayerMessage.Builder()
-                .setMessages("&9&lGM &8» &7A new proxy has registered with id &b%s".formatted(proxyId.toString().substring(0, 13)))
+                .setMessages("&9&lGM &8» &7A new proxy has registered with id &b%s".formatted(proxyId.toString()))
                 .setPermission("quickmatch.server.notify").build());
 
         return proxyInfo;
     }
 
-    public void unregisterProxy(UUID proxyId) {
+    public void unregisterProxy(Integer proxyId) {
         activeProxies.remove(proxyId);
 
         hermes.sendParcel("PLAYER_MESSAGE", new PlayerMessage.Builder()
-                .setMessages("&9&lGM &8» &7Proxy &b%s &7has unregistered".formatted(proxyId.toString().substring(0, 13)))
+                .setMessages("&9&lGM &8» &7Proxy &b%s &7has unregistered".formatted(proxyId.toString()))
                 .setPermission("quickmatch.server.notify")
                 .build());
 

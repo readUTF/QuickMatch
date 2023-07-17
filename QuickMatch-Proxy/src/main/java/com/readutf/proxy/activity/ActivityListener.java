@@ -28,7 +28,7 @@ public class ActivityListener {
                 player.getUniqueId(),
                 player.getUsername(),
                 e.getPlayer().getCurrentServer().map(serverConnection -> serverConnection.getServerInfo().getName()).orElse(""),
-                Optional.ofNullable(serverSupplier.get()).map(ProxyInfo::getName).orElse(""),
+                Optional.ofNullable(serverSupplier.get()).map(proxyInfo -> proxyInfo.getId().toString()).orElse(""),
                 false,
                 System.currentTimeMillis(),
                 ""
@@ -38,7 +38,7 @@ public class ActivityListener {
 
     @Subscribe
     public void onServerJoin(ServerConnectedEvent e) {
-        if(e.getPreviousServer().isEmpty()) {
+        if (e.getPreviousServer().isEmpty()) {
             Player player = e.getPlayer();
             liveProfileManager.save(new LiveProfile(
                     player.getUniqueId(),

@@ -8,7 +8,7 @@ import java.util.UUID;
 @AllArgsConstructor @Getter
 public class ProxyPing {
 
-    private UUID proxyId;
+    private Integer proxyId;
     private int online;
 
 }

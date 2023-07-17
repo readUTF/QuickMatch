@@ -17,6 +17,6 @@ public interface ServerService {
     Call<ResponseData<Server>> registerServerFull(@Query("object") JsonWrapper<Server> server);
 
     @DELETE("servers/unregister")
-    Call<ResponseData<Server>> unregisterServer(@Query("serverId") String serverId);
+    Call<ResponseData<Server>> unregisterServer(@Query("serverId") Integer serverId);
 
 }

@@ -28,7 +28,7 @@ public class ActivityTask extends TimerTask {
                     player.getUniqueId(),
                     player.getUsername(),
                     player.getCurrentServer().map(serverConnection -> serverConnection.getServer().getServerInfo().getName()).orElse("Unknown"),
-                    Optional.ofNullable(serverSupplier.get()).map(ProxyInfo::getName).orElse(""),
+                    Optional.ofNullable(serverSupplier.get()).map(proxyInfo -> proxyInfo.getId().toString()).orElse(""),
                     true,
                     System.currentTimeMillis(),
                     intent

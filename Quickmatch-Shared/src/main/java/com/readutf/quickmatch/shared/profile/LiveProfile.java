@@ -23,11 +23,11 @@ public class LiveProfile {
             @JsonProperty("playerId") UUID playerId,
             @JsonProperty("username") @Nonnull String username,
             @JsonProperty("lastServer") @Nonnull String lastServer,
-            @JsonProperty("lastServer") @Nonnull String lastProxy,
+            @JsonProperty("lastProxy") @Nonnull String lastProxy,
             @JsonProperty("online") boolean online,
             @JsonProperty("lastActive") @Nullable Long lastActive,
-            @JsonProperty("joinIntent") @Nullable String joinIntent)
-    {
+            @JsonProperty("joinIntent") @Nullable String joinIntent
+    ) {
         this.playerId = playerId;
         this.username = username;
         this.lastServer = lastServer;

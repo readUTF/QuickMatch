@@ -12,7 +12,7 @@ import java.util.UUID;
 @Setter
 public class Server {
 
-    private UUID serverId;
+    private int serverId;
     private String address;
     private String serverType;
     private int port;
@@ -21,7 +21,7 @@ public class Server {
     private long startupTime;
     private double tps;
 
-    public Server(UUID serverId, String address, String serverType, int port, int playerCount, long lastPing) {
+    public Server(int serverId, String address, String serverType, int port, int playerCount, long lastPing) {
         this.serverId = serverId;
         this.address = address;
         this.serverType = serverType;
@@ -35,16 +35,6 @@ public class Server {
     @JsonIgnore
     public String getCombinedAddress() {
         return address + ":" + port;
-    }
-
-    @JsonIgnore
-    public String getMediumName() {
-        return serverId.toString().substring(0, 13);
-    }
-
-    @JsonIgnore
-    public String getShortName() {
-        return serverId.toString().substring(0, 8);
     }
 
 }

@@ -7,6 +7,7 @@ import com.github.readutf.hermes.subscribers.impl.JedisParcelSubscriber;
 import com.google.inject.Inject;
 import com.readutf.proxy.activity.ActivityListener;
 import com.readutf.proxy.activity.ActivityTask;
+import com.readutf.proxy.activity.UserInfoCommand;
 import com.readutf.proxy.balancing.PlayerJoinBalancer;
 import com.readutf.proxy.commands.ProxyCommand;
 import com.readutf.proxy.commands.ServersCommand;
@@ -52,7 +53,7 @@ public class QuickMatchProxy {
         this.logger = logger;
         this.proxyServer = proxyServer;
         this.jedisPool = new JedisPool();
-        this.uuidCache = new UUIDCache(jedisPool);
+        this.uuidCache = new UUIDCache(this, jedisPool);
         this.hermes = Hermes.builder()
                 .prefix("quickmatch")
                 .parcelSender(new JedisParcelSender(jedisPool))
@@ -73,11 +74,13 @@ public class QuickMatchProxy {
         this.commandManager = new VelocityCommandManager(proxyServer, this);
         this.commandManager.registerCommand(new ServersCommand(serverManager));
         this.commandManager.registerCommand(new ProxyCommand(proxyManager));
+        this.commandManager.registerCommand(new UserInfoCommand(uuidCache, liveProfileManager));
         this.commandManager.getCommandCompletions().registerAsyncCompletion("servers", c ->
-                serverManager.getServers(false).stream().map(Server::getMediumName).toList());
+                serverManager.getServers(false).stream().map(server -> String.valueOf(server.getServerId())).toList());
 
         proxyServer.getEventManager().register(this, new PlayerJoinBalancer(proxyServer, serverManager));
         proxyServer.getEventManager().register(this, new ActivityListener(proxyManager::getProxyInfo, liveProfileManager));
+        proxyServer.getEventManager().register(this, uuidCache);
 
     }
 

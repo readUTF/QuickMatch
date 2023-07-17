@@ -34,10 +34,13 @@ public class UserInfoCommand extends BaseCommand {
         }
         LiveProfile liveProfile = profile.get();
 
-        player.sendMessage(ColorUtils.colorize("&7┏ &fUsername: %s● &7%s".formatted(liveProfile.isOnline() ? "&a" : "&c", liveProfile.getUsername())));
-        player.sendMessage(ColorUtils.colorize("&7┣ &fServer: &7%s".formatted(liveProfile.getLastServer())));
-        player.sendMessage(ColorUtils.colorize("&7┣ &fProxy: &7%s".formatted(liveProfile.getLastProxy())));
-        player.sendMessage(ColorUtils.colorize("&7┗ &fJoin Intent: &7%s".formatted(liveProfile.getJoinIntent())));
+        String lastServer = liveProfile.getLastServer();
+        String lastProxy = liveProfile.getLastProxy();
+
+        player.sendMessage(ColorUtils.colorize("&7┏ &bUsername: %s● &7%s".formatted(liveProfile.isOnline() ? "&a" : "&c", liveProfile.getUsername())));
+        player.sendMessage(ColorUtils.colorize("&7┣ &bServer: &7%s".formatted(lastServer)));
+        player.sendMessage(ColorUtils.colorize("&7┣ &bProxy: &7%s".formatted("proxy-" + lastProxy)));
+        player.sendMessage(ColorUtils.colorize("&7┗ &bJoin Intent: &7%s".formatted(liveProfile.getJoinIntent())));
 
     }
 

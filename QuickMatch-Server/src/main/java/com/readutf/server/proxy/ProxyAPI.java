@@ -16,15 +16,17 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ProxyAPI {
 
+    private static int idTracker = 1;
+
     private final ProxyManager proxyManager;
 
     @GetMapping("/register")
     public ResponseData<ProxyInfo> registerProxy(String address, int port) {
-        return ResponseData.success(proxyManager.registerProxy(UUID.randomUUID(), address, port));
+        return ResponseData.success(proxyManager.registerProxy(idTracker++, address, port));
     }
 
     @DeleteMapping("/unregister")
-    public ResponseData<String> unregisterProxy(UUID proxyId) {
+    public ResponseData<String> unregisterProxy(Integer proxyId) {
         proxyManager.unregisterProxy(proxyId);
         return ResponseData.success("Successfully unregistered proxy");
     }

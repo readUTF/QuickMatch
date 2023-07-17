@@ -32,7 +32,6 @@ public class MatchGameClient implements MatchClient {
     private final JavaPlugin javaPlugin;
     private final Retrofit retrofit;
     private final ServerManager serverManager;
-    private final Server server;
     private final JedisPool jedisPool;
     private final Hermes hermes;
     private final LiveProfileManager liveProfileManager;
@@ -49,9 +48,9 @@ public class MatchGameClient implements MatchClient {
                 .parcelSender(new JedisParcelSender(jedisPool))
                 .parcelSubscriber(new JedisParcelSubscriber(jedisPool))
                 .build();
-        this.serverManager = new ServerManager(hermes, retrofit, this::getServer);
-        this.server = serverManager.registerServer(javaPlugin.getServer().getIp(), "GAME_" + serverType, javaPlugin.getServer().getPort());
-        hermes.addParcelListener(new MatchRequestListener(this, this::getServer));
+        this.serverManager = new ServerManager(hermes, retrofit);
+        this.serverManager.registerServer(javaPlugin.getServer().getIp(), "GAME_" + serverType, javaPlugin.getServer().getPort());
+        hermes.addParcelListener(new MatchRequestListener(this, serverManager::getServer));
         hermes.addParcelListener(new SharedSubscriber(serverManager));
         matchSupplier = new MatchSupplier() {
             @Override
@@ -77,7 +76,7 @@ public class MatchGameClient implements MatchClient {
 
     @Override
     public void onDisable() {
-        serverManager.unregisterServer(server);
+        serverManager.unregisterServer();
     }
 
 }

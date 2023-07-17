@@ -53,9 +53,9 @@ public class MatchRequestListener {
     public GameData createGame(ParcelWrapper parcelWrapper) {
         HashMap<String, Object> request = parcelWrapper.get(new TypeReference<>() {});
         QueueType queueType = objectMapper.convertValue(request.get("queueType"), QueueType.class);
-        UUID serverId = UUID.fromString((String) request.get("serverId"));
+        Integer serverId = objectMapper.convertValue(request.get("serverId"), Integer.class);
 
-        String gameId = null;
+        String gameId;
         try {
             gameId = matchGameClient.getMatchSupplier().createGame(queueType);
         } catch (Exception e) {

@@ -26,6 +26,6 @@ public class ServersCommand extends Command {
             System.out.println("No servers found!");
             return;
         }
-        System.out.println("Servers: " + servers.stream().map(Server::getShortName).collect(Collectors.joining(", ")));
+        System.out.println("Servers: " + servers.stream().map(server -> String.valueOf(server.getServerId())).collect(Collectors.joining(", ")));
     }
 }

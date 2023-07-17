@@ -12,7 +12,7 @@ import com.readutf.quickmatch.shared.PlayerMessage;
 import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.shared.ServerPing;
 import com.readutf.quickmatch.shared.serializers.ServerPingSerializer;
-import com.readutf.quickmatch.shared.serializers.UUIDSerializer;
+import com.readutf.quickmatch.shared.serializers.ServerIdSerializer;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 
@@ -45,7 +45,7 @@ public class Subscriber {
         ProxyServer proxyServer = quickMatchProxy.getProxyServer();
         for (UUID playerId : players) {
             proxyServer.getPlayer(playerId).ifPresent(player -> {
-                proxyServer.getServer(gameData.getServer().getServerId().toString()).ifPresent(registeredServer -> {
+                proxyServer.getServer("server- " + gameData.getServer().getServerId()).ifPresent(registeredServer -> {
                     player.createConnectionRequest(registeredServer).fireAndForget();
                 });
             });
@@ -84,9 +84,9 @@ public class Subscriber {
     public void onPlayerMessage(ParcelWrapper parcelWrapper) {
         PlayerMessage playerMessage = parcelWrapper.get(new TypeReference<>() {});
 
-        if(playerMessage.getPermission() != null) {
+        if (playerMessage.getPermission() != null) {
             for (Player allPlayer : quickMatchProxy.getProxyServer().getAllPlayers()) {
-                if(allPlayer.hasPermission(playerMessage.getPermission())) {
+                if (allPlayer.hasPermission(playerMessage.getPermission())) {
                     for (String message : playerMessage.getMessages()) {
                         allPlayer.sendMessage(ColorUtils.colorize(message));
                     }
@@ -103,20 +103,19 @@ public class Subscriber {
         }
 
 
-
     }
 
     @ParcelListener("SERVER_UNREGISTER")
     public void onServerUnregister(ParcelWrapper parcelWrapper) {
-        UUID uuid;
+        int serverId;
         try {
-            uuid = parcelWrapper.get(new UUIDSerializer());
+            serverId = parcelWrapper.get(new ServerIdSerializer());
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
 
-        quickMatchProxy.getServerManager().unregisterServer(uuid);
+        quickMatchProxy.getServerManager().unregisterServer(serverId);
     }
 
 }

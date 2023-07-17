@@ -8,11 +8,11 @@ import java.util.UUID;
 @Getter
 public class ServerPing {
 
-    private final UUID serverId;
+    private final int serverId;
     private final int playerCount;
     private final double tps;
 
-    public ServerPing(UUID serverId, int playerCount, double tps) {
+    public ServerPing(int serverId, int playerCount, double tps) {
         this.serverId = serverId;
         this.playerCount = playerCount;
         this.tps = tps;

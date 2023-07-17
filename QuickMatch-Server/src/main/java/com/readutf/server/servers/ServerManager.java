@@ -3,7 +3,7 @@ package com.readutf.server.servers;
 import com.github.readutf.hermes.Hermes;
 import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.shared.ServerPing;
-import com.readutf.quickmatch.shared.serializers.UUIDSerializer;
+import com.readutf.quickmatch.shared.serializers.ServerIdSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public class ServerManager {
     private final Logger logger = LoggerFactory.getLogger(ServerManager.class);
 
     private final Hermes hermes;
-    private final Map<UUID, Server> idToServer;
+    private final Map<Integer, Server> idToServer;
     private final Map<String, Server> ipToServer;
 
     public ServerManager(Hermes hermes, Timer timer) {
@@ -40,12 +40,12 @@ public class ServerManager {
         return new ArrayList<>(idToServer.values());
     }
 
-    public boolean unregisterServer(UUID serverId) {
+    public boolean unregisterServer(int serverId) {
         Server server = idToServer.get(serverId);
         if (server == null) return false;
         idToServer.remove(serverId);
         ipToServer.remove(server.getCombinedAddress());
-        hermes.sendParcel("SERVER_UNREGISTER", serverId, new UUIDSerializer());
+        hermes.sendParcel("SERVER_UNREGISTER", serverId, new ServerIdSerializer());
         return true;
     }
 

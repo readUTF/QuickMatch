@@ -40,8 +40,8 @@ public class ServersCommand extends BaseCommand {
     @Subcommand("info") @CommandCompletion("@servers")
     public void info(CommandSource commandSource, String serverName) {
 
-        serverManager.getServers(false).stream().min(Comparator.comparingInt(value -> StringUtils.getLevenshteinDistance(serverName, value.getShortName()))).ifPresentOrElse(server -> {
-            commandSource.sendMessage(ColorUtils.colorize("&6&l" + server.getShortName()));
+        serverManager.getServers(false).stream().min(Comparator.comparingInt(value -> StringUtils.getLevenshteinDistance(serverName, String.valueOf(value.getServerId())))).ifPresentOrElse(server -> {
+            commandSource.sendMessage(ColorUtils.colorize("&6&l" + server.getServerId()));
             commandSource.sendMessage(ColorUtils.colorize(" &7* &eServer ID: &7" + server.getServerId()));
             commandSource.sendMessage(ColorUtils.colorize(" &7* &ePlayers: &7" + server.getPlayerCount()));
             commandSource.sendMessage(ColorUtils.colorize(" &7* &eLast Ping: &7" + ((System.currentTimeMillis() - server.getLastPing()) / 1000) + " seconds ago"));

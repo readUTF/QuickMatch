@@ -11,12 +11,10 @@ public class ProxyPingSerializer implements StringSerializer<ProxyPing> {
 
     @Override
     public String serialize(ProxyPing proxyPing) {
-        UUID proxyId = proxyPing.getProxyId();
         return Base64.getEncoder().encodeToString(
                 ByteBuffer
                         .allocate(20)
-                        .putLong(proxyId.getLeastSignificantBits())
-                        .putLong(proxyId.getMostSignificantBits())
+                        .putInt(proxyPing.getProxyId())
                         .putInt(proxyPing.getOnline()).array()
         );
     }
@@ -24,9 +22,6 @@ public class ProxyPingSerializer implements StringSerializer<ProxyPing> {
     @Override
     public ProxyPing deserialize(String s) throws Exception {
         ByteBuffer wrap = ByteBuffer.wrap(Base64.getDecoder().decode(s));
-        long leastSignificantBits = wrap.getLong();
-        long mostSignificantBits = wrap.getLong();
-        int online = wrap.getInt();
-        return new ProxyPing(new UUID(mostSignificantBits, leastSignificantBits), online);
+        return new ProxyPing(wrap.getInt(), wrap.getInt());
     }
 }

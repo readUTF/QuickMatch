@@ -24,7 +24,7 @@ public class ServerManager {
     private @Getter final Map<String, List<RegisteredServer>> typeToServers = new HashMap<>();
     private final Map<RegisteredServer, Server> registeredServerToServer;
     private final Map<Server, RegisteredServer> serverToRegisteredServer;
-    private final Map<UUID, Server> idToServer;
+    private final Map<Integer, Server> idToServer;
 
     public ServerManager(ProxyServer proxyServer, Retrofit retrofit) {
         this.proxyServer = proxyServer;
@@ -40,21 +40,11 @@ public class ServerManager {
     }
 
     public void restart() {
-        List<Server> servers = getServers(true);
         for (RegisteredServer allServer : proxyServer.getAllServers()) {
-            UUID serverId = UUID.fromString(allServer.getServerInfo().getName());
-            boolean noneMatch = true;
-            for (Server server : new ArrayList<>(servers)) {
-                if (server.getServerId().equals(serverId)) {
-                    noneMatch = false;
-                    servers.remove(server);
-                    break;
-                }
-            }
-            if (noneMatch) {
-                unregisterServer(serverId);
-            }
+            proxyServer.unregisterServer(allServer.getServerInfo());
         }
+
+        List<Server> servers = getServers(true);
         for (Server server : servers) registerServer(server);
     }
 
@@ -71,7 +61,7 @@ public class ServerManager {
     }
 
     public void registerServer(Server server) {
-        ServerInfo serverInfo = new ServerInfo(server.getServerId().toString(), new InetSocketAddress(server.getAddress(), server.getPort()));
+        ServerInfo serverInfo = new ServerInfo("server-" + server.getServerId(), new InetSocketAddress(server.getAddress(), server.getPort()));
         RegisteredServer registeredServer = proxyServer.registerServer(serverInfo);
         typeToServers.compute(server.getServerType().toLowerCase(), (s, registeredServers) -> {
             if (registeredServers == null) registeredServers = new ArrayList<>();
@@ -83,11 +73,11 @@ public class ServerManager {
         serverToRegisteredServer.put(server, registeredServer);
 
         MessageUtils.sendPermissionMessage(
-                "&9&lGM &8» &7A new &b%s &7server has registered with id &b%s".formatted(server.getServerType(), server.getShortName()),
+                "&9&lGM &8» &7A new &b%s &7server has registered with id &b%s".formatted(server.getServerType(), serverInfo.getName()),
                 "quickmatch.server.notify"
         );
 
-        Logger.getSERVER().info("Registered server %s (%s:%s)".formatted(server.getShortName(), server.getAddress(), server.getPort()));
+        Logger.getSERVER().info("Registered server %s (%s:%s)".formatted(serverInfo.getName(), server.getAddress(), server.getPort()));
     }
 
     public Server getServer(RegisteredServer registeredServer) {
@@ -102,11 +92,11 @@ public class ServerManager {
         server.setTps(serverPing.getTps());
     }
 
-    public void unregisterServer(UUID uuid) {
-        proxyServer.getServer(uuid.toString()).ifPresent(registeredServer ->
+    public void unregisterServer(int serverId) {
+        proxyServer.getServer("server-" + serverId).ifPresent(registeredServer ->
                 proxyServer.unregisterServer(registeredServer.getServerInfo())
         );
-        Server server = idToServer.remove(uuid);
+        Server server = idToServer.remove(serverId);
         RegisteredServer registeredServer = serverToRegisteredServer.get(server);
         registeredServerToServer.remove(registeredServer);
         serverToRegisteredServer.remove(server);
@@ -119,15 +109,15 @@ public class ServerManager {
 
         if(System.currentTimeMillis() - server.getLastPing() > 10000) {
             MessageUtils.sendPermissionMessage(
-                    "&9&lGM &8» &7A server with id &b%s &7has &ctimed out".formatted(server.getShortName()),
+                    "&9&lGM &8» &7A server with id &b%s &7has &ctimed out".formatted(server.getServerId()),
                     "quickmatch.server.notify"
             );
         } else {
             MessageUtils.sendPermissionMessage(
-                    "&9&lGM &8» &7A server with id &b%s &7has gone offline".formatted(server.getShortName()),
+                    "&9&lGM &8» &7A server with id &b%s &7has gone offline".formatted(server.getServerId()),
                     "quickmatch.server.notify"
             );
         }
-        Logger.getSERVER().info("Un-Registered server %s".formatted(uuid));
+        Logger.getSERVER().info("Un-Registered server %s".formatted(server.getServerId()));
     }
 }

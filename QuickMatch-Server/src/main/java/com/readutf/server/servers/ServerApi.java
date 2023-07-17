@@ -15,6 +15,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ServerApi {
 
+    private static int idTracker = 1;
+
     private final ObjectMapper objectMapper;
     private final ServerManager serverManager;
 
@@ -27,7 +29,7 @@ public class ServerApi {
      */
     @PutMapping("register")
     public ResponseData<Server> registerServer(String address, String serverType, int port) {
-        Server server = new Server(UUID.randomUUID(), address, serverType, port, 0, System.currentTimeMillis());
+        Server server = new Server(idTracker++, address, serverType, port, 0, System.currentTimeMillis());
 
         serverManager.registerServer(server);
         return ResponseData.success(server);
@@ -37,6 +39,8 @@ public class ServerApi {
     @PutMapping("registerFull")
     public ResponseData<Server> registerServerFull(String object) {
         Server server = objectMapper.readValue(object, Server.class);
+
+        server.setServerId(idTracker++);
 
         serverManager.registerServer(server);
         return ResponseData.success(server);
@@ -60,7 +64,7 @@ public class ServerApi {
      * @return whether the server was unregistered
      */
     @DeleteMapping("unregister")
-    public ResponseData<Boolean> unregisterServer(@RequestParam("serverId") UUID serverId) {
+    public ResponseData<Boolean> unregisterServer(@RequestParam("serverId") Integer serverId) {
         return ResponseData.success(serverManager.unregisterServer(serverId));
     }
 
