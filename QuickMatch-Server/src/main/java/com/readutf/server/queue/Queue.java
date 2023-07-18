@@ -2,6 +2,7 @@ package com.readutf.server.queue;
 
 import com.readutf.quickmatch.shared.*;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
+import com.readutf.server.analytics.AnalyticsManager;
 import com.readutf.server.game.GameFinder;
 import com.readutf.server.joinintent.IntentManager;
 import com.readutf.server.publisher.Publishers;
@@ -18,6 +19,7 @@ public class Queue extends TimerTask {
     private final IntentManager intentManager;
     private final LiveProfileManager liveProfileManager;
     private final QueueManager queueManager;
+    private final AnalyticsManager analyticsManager;
     private final GameFinder gameFinder;
     private final Publishers publishers;
     private final QueueType queueType;
@@ -26,12 +28,13 @@ public class Queue extends TimerTask {
     private boolean running = false;
 
 
-    public Queue(IntentManager intentManager, LiveProfileManager liveProfileManager, QueueManager queueManager, GameFinder gameFinder, Publishers publishers, QueueType queueType) {
-        this.intentManager = intentManager;
-        this.liveProfileManager = liveProfileManager;
+    public Queue(QueueManager queueManager, GameFinder gameFinder, QueueType queueType) {
+        this.liveProfileManager = queueManager.getLiveProfileManager();
+        this.analyticsManager = queueManager.getAnalyticsManager();
+        this.intentManager = queueManager.getIntentManager();
         this.queueManager = queueManager;
+        this.publishers = queueManager.getPublishers();
         this.gameFinder = gameFinder;
-        this.publishers = publishers;
         this.queueType = queueType;
         this.players = new LinkedList<>();
     }
@@ -90,6 +93,8 @@ public class Queue extends TimerTask {
             System.out.println("No game found");
             return;
         } //no game found
+
+//        analyticsManager.getQueueActivityTracker().onJoin(this);
 
         //remove players from queue
         for (List<QueueEntry> team : teams) {

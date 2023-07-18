@@ -3,8 +3,12 @@ package com.readutf.server;
 import com.github.readutf.hermes.Hermes;
 import com.github.readutf.hermes.senders.impl.JedisParcelSender;
 import com.github.readutf.hermes.subscribers.impl.JedisParcelSubscriber;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
+import com.readutf.server.analytics.AnalyticsManager;
 import com.readutf.server.commands.CommandManager;
 import com.readutf.server.commands.impl.ServersCommand;
 import com.readutf.server.config.SettingsConfig;
@@ -98,10 +102,19 @@ public class ServerApplication {
         return new Publishers(hermes);
     }
 
+    @Bean
+    public AnalyticsManager analyticsManager(MongoClient mongoClient) {
+        return new AnalyticsManager(mongoClient.getDatabase("QuickMatch"));
+    }
 
     @Bean
-    public QueueManager queueManager(IntentManager intentManager, Timer timer, LiveProfileManager liveProfileManager, GameFinder gameFinder, Publishers publishers) {
-        return new QueueManager(timer, publishers, liveProfileManager, gameFinder, intentManager);
+    public QueueManager queueManager(Timer timer,
+                                     Publishers publishers,
+                                     LiveProfileManager liveProfileManager,
+                                     AnalyticsManager analyticsManager,
+                                     GameFinder gameFinder,
+                                     IntentManager intentManager) {
+        return new QueueManager(timer, publishers, liveProfileManager, analyticsManager, gameFinder, intentManager);
     }
 
 }

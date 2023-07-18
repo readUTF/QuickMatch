@@ -53,18 +53,17 @@ public class UUIDCache {
 
     @Subscribe
     public void onJoin(ServerConnectedEvent e) {
-        if(e.getPreviousServer().isPresent()) return;
+        if (e.getPreviousServer().isPresent()) return;
 
         Player player = e.getPlayer();
         idToName.put(player.getUniqueId(), player.getUsername());
         nameToId.put(player.getUsername(), player.getUniqueId());
-        try (ForkJoinPool pool = ForkJoinPool.commonPool()) {
-            pool.submit(() -> {
-                Jedis resource = jedisPool.getResource();
-                resource.hset("UUIDCache", player.getUniqueId().toString(), player.getUsername());
-                resource.close();
-            });
-        }
+        ForkJoinPool pool = ForkJoinPool.commonPool();
+        pool.submit(() -> {
+            Jedis resource = jedisPool.getResource();
+            resource.hset("UUIDCache", player.getUniqueId().toString(), player.getUsername());
+            resource.close();
+        });
 
     }
 
