@@ -16,6 +16,9 @@
     <properties>
         <java.version>17</java.version>
     </properties>
+
+
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -55,6 +58,12 @@
             <groupId>com.github.jsixface</groupId>
             <artifactId>yamlconfig</artifactId>
             <version>1.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.image-charts/image-charts -->
+        <dependency>
+            <groupId>com.image-charts</groupId>
+            <artifactId>image-charts</artifactId>
+            <version>6.0.55</version>
         </dependency>
     </dependencies>
 
