@@ -1,24 +1,13 @@
 package com.readutf.server;
 
-import com.image.charts.ImageCharts;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.*;
-import com.readutf.quickmatch.shared.chart.LineChart;
 import com.readutf.server.analytics.impl.QueueActivity;
-import org.bson.Document;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class Test {
 

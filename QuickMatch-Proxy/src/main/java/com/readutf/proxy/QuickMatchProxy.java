@@ -11,7 +11,6 @@ import com.readutf.proxy.activity.UserInfoCommand;
 import com.readutf.proxy.balancing.PlayerJoinBalancer;
 import com.readutf.proxy.commands.ProxyCommand;
 import com.readutf.proxy.commands.ServersCommand;
-import com.readutf.proxy.config.ConfigManager;
 import com.readutf.proxy.register.ProxyManager;
 import com.readutf.proxy.server.ServerManager;
 import com.readutf.proxy.subscriber.Subscriber;
@@ -28,7 +27,6 @@ import org.slf4j.Logger;
 import redis.clients.jedis.JedisPool;
 import retrofit2.Retrofit;
 
-import java.io.File;
 import java.util.Timer;
 
 @Plugin(id = "quickmatch", name = "QuickMatch-Proxy", version = "0.1.0-SNAPSHOT", authors = {"utf_"})
@@ -46,12 +44,11 @@ public class QuickMatchProxy {
     private final Hermes hermes;
     private final ProxyManager proxyManager;
     private final LiveProfileManager liveProfileManager;
-    private final ConfigManager configManager;
 
     private VelocityCommandManager commandManager;
 
     @Inject
-    public QuickMatchProxy(ProxyServer proxyServer, Logger logger, File dataFolder) {
+    public QuickMatchProxy(ProxyServer proxyServer, Logger logger) {
         instance = this;
         this.logger = logger;
         this.proxyServer = proxyServer;
@@ -67,12 +64,9 @@ public class QuickMatchProxy {
         this.proxyManager = new ProxyManager(hermes, new Timer(), proxyServer, retrofit);
         this.serverManager = new ServerManager(proxyServer, retrofit);
         this.liveProfileManager = new LiveProfileManager(jedisPool);
-        this.configManager = new ConfigManager(dataFolder);
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new ActivityTask(proxyServer, proxyManager::getProxyInfo, liveProfileManager), 0, 4000);
-
-
     }
 
     @Subscribe
