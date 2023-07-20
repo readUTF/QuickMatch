@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.readutf.hermes.Hermes;
 import com.github.readutf.hermes.wrapper.ParcelWrapper;
 import com.readutf.quickmatch.shared.GameData;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.quickmatch.shared.Server;
 import com.readutf.server.game.GameFinder;
 import com.readutf.server.servers.ServerManager;

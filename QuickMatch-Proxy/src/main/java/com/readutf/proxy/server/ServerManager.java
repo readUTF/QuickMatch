@@ -56,7 +56,7 @@ public class ServerManager {
         return typeToServers.getOrDefault(type.toLowerCase(), Collections.emptyList());
     }
 
-    public Server getServerById(UUID serverId) {
+    public Server getServerById(Integer serverId) {
         return idToServer.get(serverId);
     }
 

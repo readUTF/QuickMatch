@@ -2,6 +2,8 @@ package com.readutf.server.queue;
 
 import com.readutf.quickmatch.shared.*;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
+import com.readutf.quickmatch.shared.queue.QueueEntry;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.server.analytics.AnalyticsManager;
 import com.readutf.server.game.GameFinder;
 import com.readutf.server.joinintent.IntentManager;
@@ -10,7 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -24,6 +25,7 @@ public class Queue extends TimerTask {
     private final Publishers publishers;
     private final QueueType queueType;
     private final LinkedList<QueueEntry> players;
+    private final Map<UUID, Long> joinedAt;
 
     private boolean running = false;
 
@@ -37,6 +39,7 @@ public class Queue extends TimerTask {
         this.gameFinder = gameFinder;
         this.queueType = queueType;
         this.players = new LinkedList<>();
+        joinedAt = new HashMap<>();
     }
 
     @Override
@@ -127,6 +130,7 @@ public class Queue extends TimerTask {
 
 
     public int addPlayer(Collection<UUID> joining) {
+        joining.forEach(uuid -> joinedAt.put(uuid, System.currentTimeMillis()));
         synchronized (players) {
             players.add(new QueueEntry(joining));
             return players.size();
@@ -146,4 +150,7 @@ public class Queue extends TimerTask {
         return queueEntry.getPlayers().stream().allMatch(liveProfileManager::isOnline);
     }
 
+    public Integer getPosition(UUID playerId) {
+        return null;
+    }
 }

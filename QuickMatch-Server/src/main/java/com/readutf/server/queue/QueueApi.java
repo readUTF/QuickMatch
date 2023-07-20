@@ -5,8 +5,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.readutf.hermes.Hermes;
 import com.readutf.quickmatch.shared.PlayerMessage;
-import com.readutf.quickmatch.shared.QueueEntry;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueEntry;
+import com.readutf.quickmatch.shared.queue.QueueInfo;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.quickmatch.shared.ResponseData;
 import com.readutf.server.queue.queuetype.QueueTypeStore;
 import lombok.AllArgsConstructor;
@@ -53,6 +54,14 @@ public class QueueApi {
         } catch (Exception e) {
             return ResponseData.error(e.getMessage());
         }
+    }
+
+    @GetMapping("/userinfo")
+    public ResponseData<QueueInfo> userInfo(@RequestParam("playerId") UUID playerId) {
+        Queue queue = queueManager.getPlayerToQueue().getOrDefault(playerId, null);
+        if(queue == null) return ResponseData.error("You are not in a queue");
+
+        return ResponseData.success(new QueueInfo(queue.getQueueType().getId(), queue.getPosition(playerId), queue.getJoinedAt().getOrDefault(playerId, System.currentTimeMillis()), queue.getPlayers().size()));
     }
 
     @DeleteMapping("/leave")

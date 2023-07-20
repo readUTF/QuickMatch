@@ -1,4 +1,4 @@
-package com.readutf.quickmatch.shared;
+package com.readutf.quickmatch.shared.queue;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

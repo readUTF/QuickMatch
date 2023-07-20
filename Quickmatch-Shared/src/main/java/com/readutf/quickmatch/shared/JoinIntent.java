@@ -2,9 +2,9 @@ package com.readutf.quickmatch.shared;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

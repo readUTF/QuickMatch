@@ -3,7 +3,7 @@ package com.readutf.server.game.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.readutf.hermes.Hermes;
 import com.readutf.quickmatch.shared.GameData;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.server.game.GameFinder;
 import lombok.AllArgsConstructor;
 

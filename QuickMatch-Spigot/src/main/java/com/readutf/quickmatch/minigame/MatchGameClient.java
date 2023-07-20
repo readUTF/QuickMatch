@@ -9,11 +9,10 @@ import com.readutf.quickmatch.minigame.games.MatchRequestListener;
 import com.readutf.quickmatch.minigame.games.MatchSupplier;
 import com.readutf.quickmatch.minigame.listeners.JoinIntentListenerDemo;
 import com.readutf.quickmatch.server.ServerManager;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.quickmatch.shared.intent.IntentService;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
 import com.readutf.quickmatch.shared.utils.RetrofitHelper;
-import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.subsriber.SharedSubscriber;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +23,6 @@ import retrofit2.Retrofit;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 public class MatchGameClient implements MatchClient {

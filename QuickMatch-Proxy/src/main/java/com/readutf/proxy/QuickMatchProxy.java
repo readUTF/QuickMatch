@@ -8,14 +8,13 @@ import com.google.inject.Inject;
 import com.readutf.proxy.activity.ActivityListener;
 import com.readutf.proxy.activity.ActivityTask;
 import com.readutf.proxy.activity.UserInfoCommand;
+import com.readutf.proxy.analytics.AnalyticsCommand;
 import com.readutf.proxy.balancing.PlayerJoinBalancer;
-import com.readutf.proxy.commands.ProxyCommand;
 import com.readutf.proxy.commands.ServersCommand;
 import com.readutf.proxy.register.ProxyManager;
 import com.readutf.proxy.server.ServerManager;
 import com.readutf.proxy.subscriber.Subscriber;
 import com.readutf.proxy.utils.UUIDCache;
-import com.readutf.quickmatch.shared.Server;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
 import com.readutf.quickmatch.shared.utils.RetrofitHelper;
 import com.velocitypowered.api.event.Subscribe;
@@ -72,8 +71,8 @@ public class QuickMatchProxy {
     @Subscribe
     public void onInit(ProxyInitializeEvent e) {
         this.commandManager = new VelocityCommandManager(proxyServer, this);
-        this.commandManager.registerCommand(new ServersCommand(serverManager));
-        this.commandManager.registerCommand(new ProxyCommand(proxyManager));
+        this.commandManager.registerCommand(new ServersCommand(serverManager, proxyManager));
+        this.commandManager.registerCommand(new AnalyticsCommand(retrofit));
         this.commandManager.registerCommand(new UserInfoCommand(uuidCache, liveProfileManager));
         this.commandManager.getCommandCompletions().registerAsyncCompletion("servers", c ->
                 serverManager.getServers(false).stream().map(server -> String.valueOf(server.getServerId())).toList());

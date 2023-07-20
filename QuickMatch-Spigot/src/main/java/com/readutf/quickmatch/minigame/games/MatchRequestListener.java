@@ -6,14 +6,12 @@ import com.github.readutf.hermes.pipline.listeners.ParcelListener;
 import com.github.readutf.hermes.wrapper.ParcelWrapper;
 import com.readutf.quickmatch.minigame.MatchGameClient;
 import com.readutf.quickmatch.shared.GameData;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.quickmatch.shared.Server;
-import com.readutf.quickmatch.shared.intent.IntentService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 

@@ -6,7 +6,7 @@ import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Subcommand;
 import com.readutf.quickmatch.queue.QueueManager;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.quickmatch.shared.ResponseData;
 import org.bukkit.entity.Player;
 

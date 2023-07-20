@@ -1,6 +1,6 @@
 package com.readutf.quickmatch.queue;
 
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.quickmatch.shared.ResponseData;
 import com.readutf.quickmatch.shared.utils.JsonWrapper;
 import retrofit2.Call;

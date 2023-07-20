@@ -2,7 +2,7 @@ package com.readutf.server.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.readutf.quickmatch.shared.GameData;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.quickmatch.shared.ResponseData;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

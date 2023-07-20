@@ -1,6 +1,6 @@
 package com.readutf.quickmatch.minigame.games;
 
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 
 import java.util.List;
 

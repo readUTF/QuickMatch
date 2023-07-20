@@ -1,6 +1,6 @@
 package com.readutf.server.queue;
 
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 import com.readutf.quickmatch.shared.profile.LiveProfileManager;
 import com.readutf.server.analytics.AnalyticsManager;
 import com.readutf.server.game.GameFinder;

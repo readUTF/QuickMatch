@@ -1,7 +1,7 @@
 package com.readutf.server.game;
 
 import com.readutf.quickmatch.shared.GameData;
-import com.readutf.quickmatch.shared.QueueType;
+import com.readutf.quickmatch.shared.queue.QueueType;
 
 import javax.annotation.Nullable;
 import java.util.List;
